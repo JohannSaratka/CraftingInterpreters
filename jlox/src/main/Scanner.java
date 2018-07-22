@@ -14,7 +14,9 @@ public class Scanner {
 	public Scanner (String source) {
 		this.source = source;
 	}
-	
+	public int getLine(){
+		return line;
+	}
 	public List<Token> scanTokens(){
 		while (!isAtEnd()){
 			// We are at the beginning of the next lexeme.
@@ -49,6 +51,14 @@ public class Scanner {
 			} else {
 				addToken(TokenType.SLASH);
 			}
+			break;
+		case ' ': // fallthrough
+		case '\r':// fallthrough
+		case '\t': // ignore whitespace 
+			break;
+			
+		case '\n':
+			line++;
 			break;
 		default:
 			Lox.error(line, "Unexpected character " + c);

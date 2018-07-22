@@ -15,23 +15,32 @@ import main.Token;
 import main.TokenType;
 
 public class ScannerTests extends TestCase {
-
+	private ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+	
+	@Override
+	protected void setUp() throws Exception {
+	    System.setErr(new PrintStream(outContent));
+		super.setUp();
+	}
+	
+	@Override
+	protected void tearDown() throws Exception {
+		System.setErr(System.err);
+		super.tearDown();
+	}
+	
 	private void testReturnsSingleValidToken( String lexeme, TokenType expectedType){
 		Scanner scan = new Scanner(lexeme);
 		List<Token> tokenList = scan.scanTokens();
 		assertEquals(2, tokenList.size()); // returns expected token and EOF
 		assertEquals(expectedType, tokenList.get(0).getType());
+		assertEquals( 0, outContent.size() );
 	}
 	
 	@Test
 	public void testScanTokens_invalidCharacterIsReported() {
-		ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-	    System.setErr(new PrintStream(outContent));
-
 	    Scanner scan = new Scanner("@");
-		scan.scanTokens();
-		
-		System.setErr(System.err);
+		scan.scanTokens();		
 	    //check if there was any error reported
 	    assertTrue( outContent.size() > 0);
 	}
@@ -50,6 +59,7 @@ public class ScannerTests extends TestCase {
 		testReturnsSingleValidToken("*", TokenType.STAR);
 		testReturnsSingleValidToken("/", TokenType.SLASH);
 	}
+	
 	@Test
 	public void testScanTokens_OneOrTwoCharacterIsValid() {
 		testReturnsSingleValidToken("!", TokenType.BANG);
@@ -63,7 +73,18 @@ public class ScannerTests extends TestCase {
 	}
 
 	@Test
-	public void testScanTokens_GetOnlyTokenAfterAfterNewLine() {
+	public void testScanTokens_GetOnlyTokenAfterAfterNewLine() {    
 		testReturnsSingleValidToken("//only +parse+ token ; after {comment}\n*",TokenType.STAR);
+	}
+	
+	@Test
+	public void testScanTokens_MultipleValidLines() {
+		String testInput = "// this is\ra\tcomment\n(( )){} // grouping stuff\n!*+-/=<> <= == // operators";
+		Scanner scan = new Scanner(testInput);
+		List<Token> tokenList = scan.scanTokens();
+		assertEquals(17, tokenList.size());
+		System.out.println(outContent.toString());
+		assertEquals( 0, outContent.size());
+		assertEquals(3, scan.getLine());
 	}
 }
