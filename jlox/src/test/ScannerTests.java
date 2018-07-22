@@ -2,19 +2,23 @@ package test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 
 import junit.framework.TestCase;
 import main.Scanner;
+import main.Token;
 import main.TokenType;
 
 public class ScannerTests extends TestCase {
 
-	private void testIsValidToken( String lexeme, TokenType expectedType){
-		// TODO use introspection
-		Scanner scan = new Scanner(lexeme);		
-		assertEquals(expectedType + " " + lexeme + " null", scan.scanTokens().get(0).toString());
+	private void testReturnsSingleValidToken( String lexeme, TokenType expectedType){
+		Scanner scan = new Scanner(lexeme);
+		List<Token> tokenList = scan.scanTokens();
+		assertEquals(2, tokenList.size()); // returns expected token and EOF
+		assertEquals(expectedType, tokenList.get(0).getType());
 	}
 	
 	@Test
@@ -32,16 +36,26 @@ public class ScannerTests extends TestCase {
 	
 	@Test
 	public void testScanTokens_singleCharacterIsValid() {
-		testIsValidToken("(", TokenType.LEFT_PAREN);
-		testIsValidToken(")", TokenType.RIGHT_PAREN);
-		testIsValidToken("{", TokenType.LEFT_BRACE);
-		testIsValidToken("}", TokenType.RIGHT_BRACE);
-		testIsValidToken(",", TokenType.COMMA);
-		testIsValidToken(".", TokenType.DOT);
-		testIsValidToken("-", TokenType.MINUS);
-		testIsValidToken("+", TokenType.PLUS);
-		testIsValidToken(";", TokenType.SEMICOLON);
-		testIsValidToken("*", TokenType.STAR);
+		testReturnsSingleValidToken("(", TokenType.LEFT_PAREN);
+		testReturnsSingleValidToken(")", TokenType.RIGHT_PAREN);
+		testReturnsSingleValidToken("{", TokenType.LEFT_BRACE);
+		testReturnsSingleValidToken("}", TokenType.RIGHT_BRACE);
+		testReturnsSingleValidToken(",", TokenType.COMMA);
+		testReturnsSingleValidToken(".", TokenType.DOT);
+		testReturnsSingleValidToken("-", TokenType.MINUS);
+		testReturnsSingleValidToken("+", TokenType.PLUS);
+		testReturnsSingleValidToken(";", TokenType.SEMICOLON);
+		testReturnsSingleValidToken("*", TokenType.STAR);
 	}
-
+	@Test
+	public void testScanTokens_OneOrTwoCharacterIsValid() {
+		testReturnsSingleValidToken("!", TokenType.BANG);
+		testReturnsSingleValidToken("!=", TokenType.BANG_EQUAL);
+		testReturnsSingleValidToken("=", TokenType.EQUAL);
+		testReturnsSingleValidToken("==", TokenType.EQUAL_EQUAL);
+		testReturnsSingleValidToken("<", TokenType.LESS);
+		testReturnsSingleValidToken("<=", TokenType.LESS_EQUAL);
+		testReturnsSingleValidToken(">", TokenType.GREATER);
+		testReturnsSingleValidToken(">=", TokenType.GREATER_EQUAL);
+	}
 }

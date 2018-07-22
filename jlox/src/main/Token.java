@@ -1,7 +1,7 @@
 package main;
 
 public class Token {
-	private final TokenType type;
+	final TokenType type;
 	final String lexeme;
 	final Object literal;
 	final int line;
