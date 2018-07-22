@@ -9,10 +9,12 @@ import java.nio.file.Paths;
 
 public class Lox {
 
+	static boolean hadError = false;
+
 	public static void main(String[] args) throws IOException {
 		if (args.length > 1) {
 			System.out.println("Usage: jlox [script]");
-			System.exit(64); // command was used incorrectly
+			System.exit(64); // EX_USAGE command was used incorrectly
 		} else if (args.length == 1) {
 			runFile(args[0]);
 		} else {
@@ -29,6 +31,9 @@ public class Lox {
 		byte[] bytes = Files.readAllBytes(Paths.get(path));
 		run(new String(bytes, Charset.defaultCharset()));
 		
+		// Indicate an error in the exit code
+		if (hadError) System.exit(65); // EX_DATAERR input data was incorrect in some way
+		
 	}
 
 	/**
@@ -42,6 +47,7 @@ public class Lox {
 		for(;;) {
 			System.out.print("> ");
 			run(reader.readLine());
+			hadError = false;
 		}
 		
 	}
@@ -49,6 +55,26 @@ public class Lox {
 	private static void run(String source) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	static void error(int line, String message) {
+		report(line, "", message);
+	}
+
+	/**
+	 * @param line
+	 * @param where
+	 * @param message
+	 * 
+	 * TODO Pretty error handling like this:
+	 * Error: Unexpected "," in argument list.
+	 *     15 | function(first, second,);
+	 *                                ^-- Here.
+	 */
+	private static void report(int line, String where, String message) {
+		System.err.println(
+				"[line " + line + "] Error" + where + ": " + message);
+		hadError  = true;		
 	}
 
 }
