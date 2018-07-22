@@ -43,6 +43,13 @@ public class Scanner {
 		case '=':addToken(match('=') ? TokenType.EQUAL_EQUAL : TokenType.EQUAL);break;
 		case '<':addToken(match('=') ? TokenType.LESS_EQUAL : TokenType.LESS);break;
 		case '>':addToken(match('=') ? TokenType.GREATER_EQUAL : TokenType.GREATER);break;
+		case '/':
+			if(match('/')) {
+				 handleComment();
+			} else {
+				addToken(TokenType.SLASH);
+			}
+			break;
 		default:
 			Lox.error(line, "Unexpected character " + c);
 			break;
@@ -54,6 +61,9 @@ public class Scanner {
 		return current >= source.length();
 	}
 	
+	/**
+	 * @return next char in source
+	 */
 	private char advance() {
 		current++;
 		return source.charAt(current - 1);
@@ -69,6 +79,10 @@ public class Scanner {
 		tokens.add(new Token(type, text, literal, line));
 	}
 	
+	/** Consume current char if its equal to the expected
+	 * @param expected char to look for
+	 * @return true if current char in source is equal to expected char 
+	 */
 	private boolean match(char expected) {
 		if (isAtEnd()) return false;
 		if (source.charAt(current) != expected) return false;
@@ -76,5 +90,19 @@ public class Scanner {
 		current++;
 		return true;
 	}
-
+	
+	/**
+	 * A comment goes until the end of the line
+	 */
+	private void handleComment(){
+		while (peek() != '\n' && !isAtEnd()) advance();
+	}
+	
+	/**
+	 * @return Current char without consuming it
+	 */
+	private char peek() {
+		if(isAtEnd()) return '\0';
+		return source.charAt(current);
+	}
 }

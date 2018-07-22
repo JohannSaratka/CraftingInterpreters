@@ -1,5 +1,7 @@
 package test;
 
+import static org.junit.Assert.*;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -46,6 +48,7 @@ public class ScannerTests extends TestCase {
 		testReturnsSingleValidToken("+", TokenType.PLUS);
 		testReturnsSingleValidToken(";", TokenType.SEMICOLON);
 		testReturnsSingleValidToken("*", TokenType.STAR);
+		testReturnsSingleValidToken("/", TokenType.SLASH);
 	}
 	@Test
 	public void testScanTokens_OneOrTwoCharacterIsValid() {
@@ -57,5 +60,10 @@ public class ScannerTests extends TestCase {
 		testReturnsSingleValidToken("<=", TokenType.LESS_EQUAL);
 		testReturnsSingleValidToken(">", TokenType.GREATER);
 		testReturnsSingleValidToken(">=", TokenType.GREATER_EQUAL);
+	}
+
+	@Test
+	public void testScanTokens_GetOnlyTokenAfterAfterNewLine() {
+		testReturnsSingleValidToken("//only +parse+ token ; after {comment}\n*",TokenType.STAR);
 	}
 }
