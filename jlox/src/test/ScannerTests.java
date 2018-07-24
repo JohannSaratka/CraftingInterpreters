@@ -1,10 +1,7 @@
 package test;
 
-import static org.junit.Assert.*;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
@@ -40,12 +37,16 @@ public class ScannerTests extends TestCase {
 		assertFalse(hasErrors());
 	}
 	
-	@Test
-	public void testScanTokens_invalidCharacterIsReported() {
-	    Scanner scan = new Scanner("@");
+	private void testInvalidTokenThrowsError( String lexeme){
+		Scanner scan = new Scanner(lexeme);
 		scan.scanTokens();		
 	    //check if there was any error reported
 	    assertTrue( hasErrors());
+	}
+	
+	@Test
+	public void testScanTokens_invalidCharacterIsReported() {
+		testInvalidTokenThrowsError("@");
 	}
 	
 	@Test
@@ -85,6 +86,7 @@ public class ScannerTests extends TestCase {
 		String testInput = "// this is\ra\tcomment\n(( )){} // grouping stuff\n!*+-/=<> <= == // operators";
 		Scanner scan = new Scanner(testInput);
 		List<Token> tokenList = scan.scanTokens();
+		
 		assertEquals(17, tokenList.size());
 		assertFalse(hasErrors());
 		assertEquals(3, scan.getLine());
@@ -100,5 +102,28 @@ public class ScannerTests extends TestCase {
 		assertEquals(TokenType.STRING, tokenList.get(0).getType());
 		assertFalse(hasErrors());
 		assertEquals(2, scan.getLine());
+	}
+	
+	@Test
+	public void testScanTokens_DecimalLiteralIsValid() {
+		String testInput = "12.34";
+		Scanner scan = new Scanner(testInput);
+		List<Token> tokenList = scan.scanTokens();
+		Token token = tokenList.get(0);
+		
+		assertEquals(TokenType.NUMBER, token.getType());
+		assertEquals(12.34, token.getLiteral());
+		assertFalse(hasErrors());
+	}
+	@Test
+	public void testScanTokens_IntegerLiteralIsValid() {
+		String testInput = "1234";
+		Scanner scan = new Scanner(testInput);
+		List<Token> tokenList = scan.scanTokens();
+		Token token = tokenList.get(0);
+		
+		assertEquals(TokenType.NUMBER, token.getType());
+		assertEquals(1234.0, token.getLiteral());
+		assertFalse(hasErrors());
 	}
 }

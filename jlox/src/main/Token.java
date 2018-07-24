@@ -20,4 +20,8 @@ public class Token {
 	public TokenType getType() {
 		return type;
 	}
+	
+	public Object getLiteral() {
+		return literal;
+	}
 }

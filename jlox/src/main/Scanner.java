@@ -61,7 +61,11 @@ public class Scanner {
 			break;
 		case '"': handleString(); break;
 		default:
-			Lox.error(line, "Unexpected character " + c);
+			if (Character.isDigit(c)){
+				handleNumber();
+			} else {
+				Lox.error(line, "Unexpected character " + c);
+			}
 			break;
 		}
 		
@@ -129,10 +133,33 @@ public class Scanner {
 	}
 	
 	/**
+	 * A comment goes until the end of the line
+	 */
+	private void handleNumber(){
+		while (Character.isDigit(peek())) advance();
+		
+		// look for fractional part
+		if(peek() == '.' && Character.isDigit(peekNext())){
+			//consume the '.'
+			advance();
+		}
+		while (Character.isDigit(peek())) advance();
+		addToken(TokenType.NUMBER,Double.parseDouble(source.substring(start, current)));
+	}
+	
+	/**
 	 * @return Current char without consuming it
 	 */
 	private char peek() {
 		if(isAtEnd()) return '\0';
 		return source.charAt(current);
+	}
+	
+	/**
+	 * @return Current char without consuming it
+	 */
+	private char peekNext() {
+		if(current+1 >= source.length()) return '\0';
+		return source.charAt(current+1);
 	}
 }
