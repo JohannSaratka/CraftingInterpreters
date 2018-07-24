@@ -55,11 +55,11 @@ public class Scanner {
 		case ' ': // fallthrough
 		case '\r':// fallthrough
 		case '\t': // ignore whitespace 
-			break;
-			
+			break;			
 		case '\n':
 			line++;
 			break;
+		case '"': handleString(); break;
 		default:
 			Lox.error(line, "Unexpected character " + c);
 			break;
@@ -106,6 +106,26 @@ public class Scanner {
 	 */
 	private void handleComment(){
 		while (peek() != '\n' && !isAtEnd()) advance();
+	}
+	
+	/**
+	 * String literal
+	 */
+	private void handleString(){
+		while (peek() != '"' && !isAtEnd()) {
+			if(peek() == '\n') line++;
+			advance();
+		}
+		if (isAtEnd()) {
+			Lox.error(line, "Unterminated string.");
+			return;
+		}
+		// The closing ".
+		advance();
+		
+		// Trim the surrounding quotes.
+		String value = source.substring(start + 1, current - 1);
+		addToken(TokenType.STRING, value);
 	}
 	
 	/**

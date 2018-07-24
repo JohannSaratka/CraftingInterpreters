@@ -15,11 +15,11 @@ import main.Token;
 import main.TokenType;
 
 public class ScannerTests extends TestCase {
-	private ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+	private ByteArrayOutputStream errorContent = new ByteArrayOutputStream();
 	
 	@Override
 	protected void setUp() throws Exception {
-	    System.setErr(new PrintStream(outContent));
+	    System.setErr(new PrintStream(errorContent));
 		super.setUp();
 	}
 	
@@ -29,12 +29,15 @@ public class ScannerTests extends TestCase {
 		super.tearDown();
 	}
 	
+	private boolean hasErrors(){
+		return (errorContent.size() != 0);
+	}
 	private void testReturnsSingleValidToken( String lexeme, TokenType expectedType){
 		Scanner scan = new Scanner(lexeme);
 		List<Token> tokenList = scan.scanTokens();
 		assertEquals(2, tokenList.size()); // returns expected token and EOF
 		assertEquals(expectedType, tokenList.get(0).getType());
-		assertEquals( 0, outContent.size() );
+		assertFalse(hasErrors());
 	}
 	
 	@Test
@@ -42,7 +45,7 @@ public class ScannerTests extends TestCase {
 	    Scanner scan = new Scanner("@");
 		scan.scanTokens();		
 	    //check if there was any error reported
-	    assertTrue( outContent.size() > 0);
+	    assertTrue( hasErrors());
 	}
 	
 	@Test
@@ -83,8 +86,19 @@ public class ScannerTests extends TestCase {
 		Scanner scan = new Scanner(testInput);
 		List<Token> tokenList = scan.scanTokens();
 		assertEquals(17, tokenList.size());
-		System.out.println(outContent.toString());
-		assertEquals( 0, outContent.size());
+		assertFalse(hasErrors());
 		assertEquals(3, scan.getLine());
+	}
+	
+	@Test
+	public void testScanTokens_MultilineStringLiteralIsValid() {
+		String testInput = "\"This is \n a String\"";
+		Scanner scan = new Scanner(testInput);
+		List<Token> tokenList = scan.scanTokens();
+
+		assertEquals(2, tokenList.size());
+		assertEquals(TokenType.STRING, tokenList.get(0).getType());
+		assertFalse(hasErrors());
+		assertEquals(2, scan.getLine());
 	}
 }
