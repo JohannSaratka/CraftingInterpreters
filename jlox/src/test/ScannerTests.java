@@ -63,6 +63,25 @@ public class ScannerTests extends TestCase {
 		testReturnsSingleValidToken("*", TokenType.STAR);
 		testReturnsSingleValidToken("/", TokenType.SLASH);
 	}
+	@Test
+	public void testScanTokens_ReservedWordsIsValid() {
+		testReturnsSingleValidToken("and", TokenType.AND);
+		testReturnsSingleValidToken("class", TokenType.CLASS);
+		testReturnsSingleValidToken("else", TokenType.ELSE);
+		testReturnsSingleValidToken("false", TokenType.FALSE);
+		testReturnsSingleValidToken("for", TokenType.FOR);
+		testReturnsSingleValidToken("fun", TokenType.FUN);
+		testReturnsSingleValidToken("if", TokenType.IF);
+		testReturnsSingleValidToken("nil", TokenType.NIL);
+		testReturnsSingleValidToken("or", TokenType.OR);
+		testReturnsSingleValidToken("print", TokenType.PRINT);
+		testReturnsSingleValidToken("return", TokenType.RETURN);
+		testReturnsSingleValidToken("super", TokenType.SUPER);
+		testReturnsSingleValidToken("this", TokenType.THIS);
+		testReturnsSingleValidToken("true", TokenType.TRUE);
+		testReturnsSingleValidToken("var", TokenType.VAR);
+		testReturnsSingleValidToken("while", TokenType.WHILE);
+	}
 	
 	@Test
 	public void testScanTokens_OneOrTwoCharacterIsValid() {
@@ -125,5 +144,21 @@ public class ScannerTests extends TestCase {
 		assertEquals(TokenType.NUMBER, token.getType());
 		assertEquals(1234.0, token.getLiteral());
 		assertFalse(hasErrors());
+	}
+	@Test
+	public void testScanTokens_identifierStartingWithUnderscoreOrLetterIsValid() {
+		testReturnsSingleValidToken("_test", TokenType.IDENTIFIER);
+		testReturnsSingleValidToken("test", TokenType.IDENTIFIER);
+		testReturnsSingleValidToken("Test", TokenType.IDENTIFIER);
+	}
+	
+	@Test
+	public void testScanTokens_upperCaseReservedWordIsIdentifier() {
+		testReturnsSingleValidToken("And", TokenType.IDENTIFIER);
+	}
+	
+	@Test
+	public void testScanTokens_reservedWordWithAdditionalCharactersIsIdentifier() {
+		testReturnsSingleValidToken("orchid", TokenType.IDENTIFIER);
 	}
 }
