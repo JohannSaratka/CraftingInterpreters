@@ -69,6 +69,7 @@ public class Scanner {
 		case '/':
 			if(match('/')) {
 				 handleComment();
+				 // TODO handle multiline comment /* */ } else if (match('*')){ 
 			} else {
 				addToken(TokenType.SLASH);
 			}
