@@ -1,4 +1,4 @@
-package test;
+package main;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -33,7 +33,7 @@ public class ScannerTests extends TestCase {
 		Scanner scan = new Scanner(lexeme);
 		List<Token> tokenList = scan.scanTokens();
 		assertEquals(2, tokenList.size()); // returns expected token and EOF
-		assertEquals(expectedType, tokenList.get(0).getType());
+		assertEquals(expectedType, tokenList.get(0).type);
 		assertFalse(hasErrors());
 	}
 	
@@ -118,7 +118,7 @@ public class ScannerTests extends TestCase {
 		List<Token> tokenList = scan.scanTokens();
 
 		assertEquals(2, tokenList.size());
-		assertEquals(TokenType.STRING, tokenList.get(0).getType());
+		assertEquals(TokenType.STRING, tokenList.get(0).type);
 		assertFalse(hasErrors());
 		assertEquals(2, scan.getLine());
 	}
@@ -130,8 +130,8 @@ public class ScannerTests extends TestCase {
 		List<Token> tokenList = scan.scanTokens();
 		Token token = tokenList.get(0);
 		
-		assertEquals(TokenType.NUMBER, token.getType());
-		assertEquals(12.34, token.getLiteral());
+		assertEquals(TokenType.NUMBER, token.type);
+		assertEquals(12.34, token.literal);
 		assertFalse(hasErrors());
 	}
 	@Test
@@ -141,8 +141,8 @@ public class ScannerTests extends TestCase {
 		List<Token> tokenList = scan.scanTokens();
 		Token token = tokenList.get(0);
 		
-		assertEquals(TokenType.NUMBER, token.getType());
-		assertEquals(1234.0, token.getLiteral());
+		assertEquals(TokenType.NUMBER, token.type);
+		assertEquals(1234.0, token.literal);
 		assertFalse(hasErrors());
 	}
 	@Test

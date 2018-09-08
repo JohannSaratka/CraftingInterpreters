@@ -5,13 +5,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Scanner {
+class Scanner {
 	private final String source;
 	private final List<Token> tokens = new ArrayList<>();
+	
 	private int start = 0;
 	private int current = 0;
 	private int line = 1;
+	
 	private static final Map<String, TokenType> keywords;
+	
 	static {
 		keywords = new HashMap<>();
 		keywords.put("and", TokenType.AND);
@@ -32,13 +35,15 @@ public class Scanner {
 		keywords.put("while", TokenType.WHILE);
 	}
 	
-	public Scanner (String source) {
+	Scanner (String source) {
 		this.source = source;
 	}
+	
 	public int getLine(){
 		return line;
 	}
-	public List<Token> scanTokens(){
+	
+	List<Token> scanTokens(){
 		while (!isAtEnd()){
 			// We are at the beginning of the next lexeme.
 			start = current ;
@@ -162,9 +167,9 @@ public class Scanner {
 	private void handleNumber(){
 		while (Character.isDigit(peek())) advance();
 		
-		// look for fractional part
+		// Look for fractional part
 		if(peek() == '.' && Character.isDigit(peekNext())){
-			//consume the '.'
+			// Consume the '.'
 			advance();
 		}
 		while (Character.isDigit(peek())) advance();
