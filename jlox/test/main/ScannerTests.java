@@ -29,7 +29,7 @@ public class ScannerTests extends TestCase {
 	private boolean hasErrors(){
 		return (errorContent.size() != 0);
 	}
-	private void testReturnsSingleValidToken( String lexeme, TokenType expectedType){
+	private void shouldReturnSingleValidToken( String lexeme, TokenType expectedType){
 		Scanner scan = new Scanner(lexeme);
 		List<Token> tokenList = scan.scanTokens();
 		assertEquals(2, tokenList.size()); // returns expected token and EOF
@@ -37,7 +37,7 @@ public class ScannerTests extends TestCase {
 		assertFalse(hasErrors());
 	}
 	
-	private void testInvalidTokenThrowsError( String lexeme){
+	private void invalidTokenShouldThrowError( String lexeme){
 		Scanner scan = new Scanner(lexeme);
 		scan.scanTokens();		
 	    //check if there was any error reported
@@ -46,58 +46,58 @@ public class ScannerTests extends TestCase {
 	
 	@Test
 	public void testScanTokens_invalidCharacterIsReported() {
-		testInvalidTokenThrowsError("@");
+		invalidTokenShouldThrowError("@");
 	}
 	
 	@Test
 	public void testScanTokens_singleCharacterIsValid() {
-		testReturnsSingleValidToken("(", TokenType.LEFT_PAREN);
-		testReturnsSingleValidToken(")", TokenType.RIGHT_PAREN);
-		testReturnsSingleValidToken("{", TokenType.LEFT_BRACE);
-		testReturnsSingleValidToken("}", TokenType.RIGHT_BRACE);
-		testReturnsSingleValidToken(",", TokenType.COMMA);
-		testReturnsSingleValidToken(".", TokenType.DOT);
-		testReturnsSingleValidToken("-", TokenType.MINUS);
-		testReturnsSingleValidToken("+", TokenType.PLUS);
-		testReturnsSingleValidToken(";", TokenType.SEMICOLON);
-		testReturnsSingleValidToken("*", TokenType.STAR);
-		testReturnsSingleValidToken("/", TokenType.SLASH);
+		shouldReturnSingleValidToken("(", TokenType.LEFT_PAREN);
+		shouldReturnSingleValidToken(")", TokenType.RIGHT_PAREN);
+		shouldReturnSingleValidToken("{", TokenType.LEFT_BRACE);
+		shouldReturnSingleValidToken("}", TokenType.RIGHT_BRACE);
+		shouldReturnSingleValidToken(",", TokenType.COMMA);
+		shouldReturnSingleValidToken(".", TokenType.DOT);
+		shouldReturnSingleValidToken("-", TokenType.MINUS);
+		shouldReturnSingleValidToken("+", TokenType.PLUS);
+		shouldReturnSingleValidToken(";", TokenType.SEMICOLON);
+		shouldReturnSingleValidToken("*", TokenType.STAR);
+		shouldReturnSingleValidToken("/", TokenType.SLASH);
 	}
 	@Test
 	public void testScanTokens_ReservedWordsIsValid() {
-		testReturnsSingleValidToken("and", TokenType.AND);
-		testReturnsSingleValidToken("class", TokenType.CLASS);
-		testReturnsSingleValidToken("else", TokenType.ELSE);
-		testReturnsSingleValidToken("false", TokenType.FALSE);
-		testReturnsSingleValidToken("for", TokenType.FOR);
-		testReturnsSingleValidToken("fun", TokenType.FUN);
-		testReturnsSingleValidToken("if", TokenType.IF);
-		testReturnsSingleValidToken("nil", TokenType.NIL);
-		testReturnsSingleValidToken("or", TokenType.OR);
-		testReturnsSingleValidToken("print", TokenType.PRINT);
-		testReturnsSingleValidToken("return", TokenType.RETURN);
-		testReturnsSingleValidToken("super", TokenType.SUPER);
-		testReturnsSingleValidToken("this", TokenType.THIS);
-		testReturnsSingleValidToken("true", TokenType.TRUE);
-		testReturnsSingleValidToken("var", TokenType.VAR);
-		testReturnsSingleValidToken("while", TokenType.WHILE);
+		shouldReturnSingleValidToken("and", TokenType.AND);
+		shouldReturnSingleValidToken("class", TokenType.CLASS);
+		shouldReturnSingleValidToken("else", TokenType.ELSE);
+		shouldReturnSingleValidToken("false", TokenType.FALSE);
+		shouldReturnSingleValidToken("for", TokenType.FOR);
+		shouldReturnSingleValidToken("fun", TokenType.FUN);
+		shouldReturnSingleValidToken("if", TokenType.IF);
+		shouldReturnSingleValidToken("nil", TokenType.NIL);
+		shouldReturnSingleValidToken("or", TokenType.OR);
+		shouldReturnSingleValidToken("print", TokenType.PRINT);
+		shouldReturnSingleValidToken("return", TokenType.RETURN);
+		shouldReturnSingleValidToken("super", TokenType.SUPER);
+		shouldReturnSingleValidToken("this", TokenType.THIS);
+		shouldReturnSingleValidToken("true", TokenType.TRUE);
+		shouldReturnSingleValidToken("var", TokenType.VAR);
+		shouldReturnSingleValidToken("while", TokenType.WHILE);
 	}
 	
 	@Test
 	public void testScanTokens_OneOrTwoCharacterIsValid() {
-		testReturnsSingleValidToken("!", TokenType.BANG);
-		testReturnsSingleValidToken("!=", TokenType.BANG_EQUAL);
-		testReturnsSingleValidToken("=", TokenType.EQUAL);
-		testReturnsSingleValidToken("==", TokenType.EQUAL_EQUAL);
-		testReturnsSingleValidToken("<", TokenType.LESS);
-		testReturnsSingleValidToken("<=", TokenType.LESS_EQUAL);
-		testReturnsSingleValidToken(">", TokenType.GREATER);
-		testReturnsSingleValidToken(">=", TokenType.GREATER_EQUAL);
+		shouldReturnSingleValidToken("!", TokenType.BANG);
+		shouldReturnSingleValidToken("!=", TokenType.BANG_EQUAL);
+		shouldReturnSingleValidToken("=", TokenType.EQUAL);
+		shouldReturnSingleValidToken("==", TokenType.EQUAL_EQUAL);
+		shouldReturnSingleValidToken("<", TokenType.LESS);
+		shouldReturnSingleValidToken("<=", TokenType.LESS_EQUAL);
+		shouldReturnSingleValidToken(">", TokenType.GREATER);
+		shouldReturnSingleValidToken(">=", TokenType.GREATER_EQUAL);
 	}
 
 	@Test
 	public void testScanTokens_GetOnlyTokenAfterAfterNewLine() {    
-		testReturnsSingleValidToken("//only +parse+ token ; after {comment}\n*",TokenType.STAR);
+		shouldReturnSingleValidToken("//only +parse+ token ; after {comment}\n*",TokenType.STAR);
 	}
 	
 	@Test
@@ -147,18 +147,18 @@ public class ScannerTests extends TestCase {
 	}
 	@Test
 	public void testScanTokens_identifierStartingWithUnderscoreOrLetterIsValid() {
-		testReturnsSingleValidToken("_test", TokenType.IDENTIFIER);
-		testReturnsSingleValidToken("test", TokenType.IDENTIFIER);
-		testReturnsSingleValidToken("Test", TokenType.IDENTIFIER);
+		shouldReturnSingleValidToken("_test", TokenType.IDENTIFIER);
+		shouldReturnSingleValidToken("test", TokenType.IDENTIFIER);
+		shouldReturnSingleValidToken("Test", TokenType.IDENTIFIER);
 	}
 	
 	@Test
 	public void testScanTokens_upperCaseReservedWordIsIdentifier() {
-		testReturnsSingleValidToken("And", TokenType.IDENTIFIER);
+		shouldReturnSingleValidToken("And", TokenType.IDENTIFIER);
 	}
 	
 	@Test
 	public void testScanTokens_reservedWordWithAdditionalCharactersIsIdentifier() {
-		testReturnsSingleValidToken("orchid", TokenType.IDENTIFIER);
+		shouldReturnSingleValidToken("orchid", TokenType.IDENTIFIER);
 	}
 }
