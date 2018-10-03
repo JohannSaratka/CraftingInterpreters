@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * @todo challenge: handle block comments / * ... * /, handle newlines in them  
+ */
 class Scanner {
 	private final String source;
 	private final List<Token> tokens = new ArrayList<>();
@@ -74,7 +76,6 @@ class Scanner {
 		case '/':
 			if(match('/')) {
 				 handleComment();
-				 // TODO handle multiline comment /* */ } else if (match('*')){ 
 			} else {
 				addToken(TokenType.SLASH);
 			}

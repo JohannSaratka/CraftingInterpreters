@@ -4,7 +4,10 @@ import main.Expr.Binary;
 import main.Expr.Grouping;
 import main.Expr.Literal;
 import main.Expr.Unary;
-
+/**
+ * @todo challenge: define visitor class that takes expression converts it to
+ * reverse polish notation and returns resulting string
+ */
 class AstPrinter implements Expr.Visitor<String>{
 	String print(Expr expr) {
 		return expr.accept(this);

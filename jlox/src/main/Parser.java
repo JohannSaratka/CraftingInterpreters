@@ -3,7 +3,11 @@ package main;
 import java.util.List;
 
 import junit.framework.ComparisonCompactor;
-
+/**
+ * @todo challenge: add comma operator
+ * @todo challenge: add ternary operator
+ * @todo challenge: add error handling for binary operator without left hand operand.
+ */
 class Parser {
 	@SuppressWarnings("serial")
 	private static class ParseError extends RuntimeException {}
