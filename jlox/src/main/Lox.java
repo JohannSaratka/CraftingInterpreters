@@ -9,9 +9,10 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class Lox {
-
+	private static final Interpreter interpreter = new Interpreter();
 	static boolean hadError = false;
-
+	static boolean hadRuntimeError = false;
+	
 	public static void main(String[] args) throws IOException {
 		if (args.length > 1) {
 			System.out.println("Usage: jlox [script]");
@@ -33,7 +34,14 @@ public class Lox {
 		run(new String(bytes, Charset.defaultCharset()));
 		
 		// Indicate an error in the exit code
-		if (hadError) System.exit(65); // EX_DATAERR input data was incorrect in some way
+		if (hadError) {
+			// EX_DATAERR input data was incorrect in some way
+			System.exit(65); 
+		}
+		if (hadRuntimeError) {
+			// EX_SOFTWARE An internal software error has been detected
+			System.exit(70); 
+		}
 		
 	}
 
@@ -64,7 +72,7 @@ public class Lox {
 	    	return;
 	    }
 	    
-	    System.out.println(new AstPrinter().print(expressions));
+	    interpreter.interpret(expressions);
 	}
 	
 	static void error(int line, String message) {
@@ -93,5 +101,11 @@ public class Lox {
 		} else {
 			report(token.line, " at '" + token.lexeme + "'", message);
 		}
+	}
+
+	static void runtimeError(RuntimeError error) {
+		System.err.println(error.getMessage() + 
+				"\n[line " + error.token.line + "]");
+		hadRuntimeError = true;		
 	}
 }
