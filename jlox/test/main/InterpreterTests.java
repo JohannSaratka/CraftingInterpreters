@@ -3,11 +3,10 @@ package main;
 import org.junit.Test;
 
 import junit.framework.TestCase;
-import main.Expr;
-import main.Expr.Literal;
 
 public class InterpreterTests extends TestCase {
 	Interpreter interpreter = new Interpreter();
+	
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -19,7 +18,7 @@ public class InterpreterTests extends TestCase {
 	}
 	
 	@Test
-	public void testVisitBinary_CorrectInput() {
+	public void testVisitBinaryExpr_CorrectInput() {
 		checkVisitBinary(3.0, TokenType.MINUS, 1.0, 2.0);
 		checkVisitBinary(3.0, TokenType.PLUS, 1.0, 4.0);
 		checkVisitBinary(6.0, TokenType.SLASH, 2.0, 3.0);
@@ -37,20 +36,34 @@ public class InterpreterTests extends TestCase {
 	}
 	
 	private void checkVisitBinary(Object left, TokenType type, Object right, Object expected) {
-		Expr.Binary testData = new Expr.Binary(createLiteral(left), createToken(type), createLiteral(right));
+		Expr.Binary testData = new Expr.Binary(createLiteral(left), 
+				createToken(type), createLiteral(right));
 		assertEquals(expected, interpreter.visitBinaryExpr(testData));
-	}
-
-	private Token createToken(TokenType type) {
-		return new Token(type, "", null, 0);
-	}
-
-	private Literal createLiteral(Object val) {
-		return new Expr.Literal(val);
 	}
 	
 	@Test
-	public void testVisitUnary_CorrectInput() {
+	public void testVisitBinaryExpr_IncorrectInput() {
+		checkVisitBinaryThrowsRuntimeError(3.0, TokenType.GREATER, "three");
+		checkVisitBinaryThrowsRuntimeError("three", TokenType.GREATER_EQUAL, 3.0 );
+		checkVisitBinaryThrowsRuntimeError(true, TokenType.LESS, 3.0 );
+		checkVisitBinaryThrowsRuntimeError(3.0, TokenType.LESS_EQUAL, false );
+		checkVisitBinaryThrowsRuntimeError(3.0, TokenType.MINUS, null );
+		checkVisitBinaryThrowsRuntimeError(null, TokenType.PLUS, "test" );
+		checkVisitBinaryThrowsRuntimeError(true, TokenType.SLASH, false );
+		checkVisitBinaryThrowsRuntimeError(false, TokenType.STAR, null );
+	}
+	
+	private void checkVisitBinaryThrowsRuntimeError(Object left, TokenType type, Object right) {
+		try {
+			Expr.Binary testData = new Expr.Binary(createLiteral(left), 
+					createToken(type), createLiteral(right));
+			interpreter.visitBinaryExpr(testData);
+			fail("RuntimeError did not occure.");
+		} catch (RuntimeError e) {}
+	}
+	
+	@Test
+	public void testVisitUnaryExpr_CorrectInput() {
 		checkVisitUnary(TokenType.MINUS, 3.0, -3.0);
 		checkVisitUnary(TokenType.BANG, true, false);
 		checkVisitUnary(TokenType.BANG, false, true);
@@ -63,5 +76,34 @@ public class InterpreterTests extends TestCase {
 	private void checkVisitUnary(TokenType type, Object right, Object expected) {
 		Expr.Unary testData = new Expr.Unary(createToken(type), createLiteral(right));
 		assertEquals(expected, interpreter.visitUnaryExpr(testData));
+	}
+	
+	@Test
+	public void testVisitUnaryExpr_IncorrectInput() {
+		try {
+			Expr.Unary testData = new Expr.Unary(createToken(TokenType.MINUS), createLiteral(true));
+			interpreter.visitUnaryExpr(testData);
+			fail("RuntimeError did not occure.");
+		} catch (RuntimeError e) {}
+	}
+	
+	private Token createToken(TokenType type) {
+		return new Token(type, "", null, 0);
+	}
+
+	private Expr.Literal createLiteral(Object val) {
+		return new Expr.Literal(val);
+	}
+	
+	@Test
+	public void testVisitLiteralExpr_IncorrectInput() {
+		Expr.Literal testData = new Expr.Literal("three");
+		assertEquals("three", interpreter.visitLiteralExpr(testData));
+	}
+	
+	@Test
+	public void testVisitGroupingExpr_IncorrectInput() {
+		Expr.Grouping testData = new Expr.Grouping(new Expr.Literal("three"));
+		assertEquals("three", interpreter.visitGroupingExpr(testData));
 	}
 }
