@@ -5,8 +5,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import junit.framework.TestCase;
-import main.AstPrinter;
-import main.Expr;
 
 public class AstPrinterTests  extends TestCase {
 

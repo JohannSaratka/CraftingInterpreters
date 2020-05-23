@@ -7,9 +7,6 @@ import java.util.List;
 import org.junit.Test;
 
 import junit.framework.TestCase;
-import main.Scanner;
-import main.Token;
-import main.TokenType;
 
 public class ScannerTests extends TestCase {
 	private ByteArrayOutputStream errorContent = new ByteArrayOutputStream();
