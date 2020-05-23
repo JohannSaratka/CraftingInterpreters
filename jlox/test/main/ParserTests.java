@@ -48,6 +48,7 @@ public class ParserTests extends TestCase  {
 				break;
 			}
 		}
+		tList.add(new Token(TokenType.SEMICOLON,";",null,1));
 		tList.add(new Token(TokenType.EOF,"",null,1));
 		return tList;
 	}
@@ -56,11 +57,13 @@ public class ParserTests extends TestCase  {
 		List<Token> tList = generateTokenList(types);
 
 		Parser p = new Parser(tList);
-		return p.parse();
+		Stmt.Expression statement = (Stmt.Expression) p.parse().get(0);
+		
+		return statement.expression;
 	}
 	
 	private void shouldReturnBinaryExpr(TokenType t){
-		Expr e = parseTypes(TokenType.NUMBER, t, TokenType.NUMBER);
+		Expr e = parseTypes(TokenType.NUMBER, t, TokenType.NUMBER);		
 		assertThat(e, instanceOf(Expr.Binary.class));		
 	}
 	
@@ -118,7 +121,9 @@ public class ParserTests extends TestCase  {
 		tList.add(new Token(TokenType.MINUS,"-",null,1));
 		tList.add(new Token(TokenType.NUMBER,"1",1,1));
 		tList.add(new Token(TokenType.SEMICOLON,";",null,1));
+		tList.add(new Token(TokenType.EOF,"",null,1));
 		Parser p = new Parser(tList);
+		List<Stmt> e = p.parse();
 		fail("Not yet implemented");
 	}
 

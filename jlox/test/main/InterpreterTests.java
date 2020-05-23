@@ -1,5 +1,8 @@
 package main;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+
 import org.junit.Test;
 
 import junit.framework.TestCase;
@@ -33,6 +36,7 @@ public class InterpreterTests extends TestCase {
 		checkVisitBinary(null, TokenType.EQUAL_EQUAL, null, true);
 		checkVisitBinary("null", TokenType.EQUAL_EQUAL, null, false);
 		checkVisitBinary(true, TokenType.EQUAL_EQUAL, false, false);
+		//checkVisitBinary("Hello", TokenType.PLUS, 1, "Hello1"); // challenge not yet implemented
 	}
 	
 	private void checkVisitBinary(Object left, TokenType type, Object right, Object expected) {
@@ -105,5 +109,41 @@ public class InterpreterTests extends TestCase {
 	public void testVisitGroupingExpr_IncorrectInput() {
 		Expr.Grouping testData = new Expr.Grouping(new Expr.Literal("three"));
 		assertEquals("three", interpreter.visitGroupingExpr(testData));
+	}
+	
+	@Test
+	public void testExpressionStmt() {
+		Stmt.Expression stmt = new Stmt.Expression(
+				new Expr.Binary(
+						createLiteral(6.0), 
+						createToken(TokenType.MINUS), 
+						createLiteral(4.0))
+				);
+		interpreter.visitExpressionStmt(stmt);
+		//TODO How to test that expression was evaluated?
+	}
+	@Test
+	public void testPrintStmt_printString() {
+		ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+		PrintStream originalOut = System.out;
+		System.setOut(new PrintStream(outContent));
+		
+		Stmt.Print stmt = new Stmt.Print(createLiteral("one"));	
+		interpreter.visitPrintStmt(stmt);
+		
+		assertEquals("one\n", outContent.toString());
+		System.setOut(originalOut);
+	}
+	public void testPrintStmt_printExpression() {
+		ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+		PrintStream originalOut = System.out;
+		System.setOut(new PrintStream(outContent));
+		
+		Stmt.Print stmt = new Stmt.Print(new Expr.Binary(createLiteral(1.0), 
+				createToken(TokenType.PLUS), createLiteral(2.0)));	
+		interpreter.visitPrintStmt(stmt);
+		
+		assertEquals("3\n", outContent.toString());
+		System.setOut(originalOut);
 	}
 }

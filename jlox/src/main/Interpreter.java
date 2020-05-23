@@ -1,6 +1,8 @@
 package main;
 
-public class Interpreter implements Expr.Visitor<Object> {
+import java.util.List;
+
+public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 /**
  * @todo Extend the code in visitBinaryExpr() to support that 
  * if either operand of '+' is a string, the other is converted 
@@ -123,7 +125,7 @@ public class Interpreter implements Expr.Visitor<Object> {
 		if (object instanceof Double) {
 			String text = object.toString();
 			if(text.endsWith(".0")) {
-				text= text.substring(0, text.length()-2);
+				text = text.substring(0, text.length()-2);
 			}
 			return text;
 		}
@@ -134,14 +136,30 @@ public class Interpreter implements Expr.Visitor<Object> {
 		return expression.accept(this);
 	}
 	
-	void interpret(Expr expression) {
+	private void execute(Stmt stmt) {
+		stmt.accept(this);
+	}
+	
+	@Override
+	public Void visitExpressionStmt(Stmt.Expression stmt) {
+		evaluate(stmt.expression);
+		return null;
+	}
+
+	@Override
+	public Void visitPrintStmt(Stmt.Print stmt) {
+		Object value = evaluate(stmt.expression);
+		System.out.println(stringify(value));
+		return null;
+	}
+	
+	void interpret(List<Stmt> statements) {
 		try {
-			Object value = evaluate(expression);
-			System.out.println(stringify(value));
+			for (Stmt statement : statements) {
+				execute(statement);
+			}
 		} catch (RuntimeError error) {
 			Lox.runtimeError(error);
 		}
 	}
-
-	
 }
