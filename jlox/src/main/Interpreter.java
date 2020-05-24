@@ -10,6 +10,38 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
  * @todo Change the implementation in visitBinaryExpr() to 
  * detect and report a runtime error for division by zero.
  */
+	
+	void interpret(List<Stmt> statements) {
+		try {
+			for (Stmt statement : statements) {
+				execute(statement);
+			}
+		} catch (RuntimeError error) {
+			Lox.runtimeError(error);
+		}
+	}
+	
+	private Object evaluate(Expr expression) {
+		return expression.accept(this);
+	}
+	
+	private void execute(Stmt stmt) {
+		stmt.accept(this);
+	}
+	
+	@Override
+	public Void visitExpressionStmt(Stmt.Expression stmt) {
+		evaluate(stmt.expression);
+		return null;
+	}
+
+	@Override
+	public Void visitPrintStmt(Stmt.Print stmt) {
+		Object value = evaluate(stmt.expression);
+		System.out.println(stringify(value));
+		return null;
+	}
+	
 	@Override
 	public Object visitBinaryExpr(Expr.Binary expr) {
 		Object left = evaluate(expr.left);
@@ -39,9 +71,11 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 			if(left instanceof Double && right instanceof Double) {
 				return (double) left + (double) right;
 			}
+			
 			if(left instanceof String && right instanceof String) {
 				return (String) left + (String) right;
 			}
+			
 			throw new RuntimeError(expr.operator, 
 					"Operand must be two numbers or two strings.");
 		case SLASH:
@@ -130,36 +164,5 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void> {
 			return text;
 		}
 		return object.toString();
-	}
-	
-	private Object evaluate(Expr expression) {
-		return expression.accept(this);
-	}
-	
-	private void execute(Stmt stmt) {
-		stmt.accept(this);
-	}
-	
-	@Override
-	public Void visitExpressionStmt(Stmt.Expression stmt) {
-		evaluate(stmt.expression);
-		return null;
-	}
-
-	@Override
-	public Void visitPrintStmt(Stmt.Print stmt) {
-		Object value = evaluate(stmt.expression);
-		System.out.println(stringify(value));
-		return null;
-	}
-	
-	void interpret(List<Stmt> statements) {
-		try {
-			for (Stmt statement : statements) {
-				execute(statement);
-			}
-		} catch (RuntimeError error) {
-			Lox.runtimeError(error);
-		}
 	}
 }
