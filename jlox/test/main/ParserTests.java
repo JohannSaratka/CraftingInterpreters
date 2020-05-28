@@ -26,6 +26,7 @@ public class ParserTests extends TestCase  {
 		tokenMap.put(TokenType.GREATER_EQUAL, new Token(TokenType.GREATER_EQUAL, ">=", null, 1));
 		tokenMap.put(TokenType.LESS, new Token(TokenType.LESS, "<", null, 1));
 		tokenMap.put(TokenType.LESS_EQUAL, new Token(TokenType.LESS_EQUAL, "<=", null, 1));
+		tokenMap.put(TokenType.EQUAL, new Token(TokenType.EQUAL, "=", null, 1));
 		tokenMap.put(TokenType.PLUS, new Token(TokenType.PLUS, "+", null, 1));
 		tokenMap.put(TokenType.MINUS, new Token(TokenType.MINUS, "-", null, 1));
 		tokenMap.put(TokenType.SLASH, new Token(TokenType.SLASH, "/", null, 1));
@@ -34,7 +35,9 @@ public class ParserTests extends TestCase  {
 		tokenMap.put(TokenType.TRUE, new Token(TokenType.TRUE, "", null, 1));
 		tokenMap.put(TokenType.FALSE, new Token(TokenType.FALSE, "", null, 1));
 		tokenMap.put(TokenType.NIL, new Token(TokenType.NIL, "", null, 1));
+		tokenMap.put(TokenType.IDENTIFIER, new Token(TokenType.IDENTIFIER, "x", null, 1));
 		tokenMap.put(TokenType.STRING, new Token(TokenType.STRING, "ab", "ab", 1));
+		tokenMap.put(TokenType.VAR, new Token(TokenType.VAR, "var", null, 1));
 		tokenMap.put(TokenType.LEFT_PAREN, new Token(TokenType.LEFT_PAREN, "(", null, 1));
 		tokenMap.put(TokenType.RIGHT_PAREN, new Token(TokenType.RIGHT_PAREN, ")", null, 1));
 		tokenMap.put(TokenType.SEMICOLON, new Token(TokenType.SEMICOLON, ";", null, 1));
@@ -146,5 +149,33 @@ public class ParserTests extends TestCase  {
 	@Test
 	public void testParse_error_recovery() {
 		fail("Not yet implemented");
+	}
+	
+	@Test
+	public void testParse_Identifier() {
+		Expr e = parseTypes(TokenType.IDENTIFIER);
+		assertThat(e, instanceOf(Expr.Variable.class));	
+	}
+	
+	@Test
+	public void testParse_EmptyDeclaration() {
+		List<Token> tList = generateTokenList(TokenType.VAR, TokenType.IDENTIFIER);
+
+		Parser p = new Parser(tList);
+		Stmt.Var statement = (Stmt.Var) p.parse().get(0);
+		assertEquals(TokenType.IDENTIFIER, statement.name.type);
+		assertEquals("x", statement.name.lexeme);
+		assertNull(statement.initializer);	
+	}
+	
+	@Test
+	public void testParse_InitilizerDeclaration() {
+		List<Token> tList = generateTokenList(TokenType.VAR, TokenType.IDENTIFIER, TokenType.EQUAL, TokenType.STRING);
+
+		Parser p = new Parser(tList);
+		Stmt.Var statement = (Stmt.Var) p.parse().get(0);
+		assertEquals(TokenType.IDENTIFIER, statement.name.type);
+		assertEquals("x", statement.name.lexeme);
+		assertThat(statement.initializer, instanceOf(Expr.Literal.class));
 	}
 }
