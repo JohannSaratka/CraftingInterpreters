@@ -1,7 +1,9 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.CoreMatchers.*;
@@ -12,7 +14,33 @@ import org.junit.Test;
 import junit.framework.TestCase;
 
 public class ParserTests extends TestCase  {
+	private static final Map<TokenType, Token> tokenMap;
+	
+	static {
+		tokenMap = new HashMap<>();
 
+		tokenMap.put(TokenType.NUMBER, new Token(TokenType.NUMBER, "0", 0, 1));
+		tokenMap.put(TokenType.EQUAL_EQUAL, new Token(TokenType.EQUAL_EQUAL, "==", null, 1));
+		tokenMap.put(TokenType.BANG_EQUAL, new Token(TokenType.BANG_EQUAL, "!=", null, 1));
+		tokenMap.put(TokenType.GREATER, new Token(TokenType.GREATER, ">", null, 1));
+		tokenMap.put(TokenType.GREATER_EQUAL, new Token(TokenType.GREATER_EQUAL, ">=", null, 1));
+		tokenMap.put(TokenType.LESS, new Token(TokenType.LESS, "<", null, 1));
+		tokenMap.put(TokenType.LESS_EQUAL, new Token(TokenType.LESS_EQUAL, "<=", null, 1));
+		tokenMap.put(TokenType.PLUS, new Token(TokenType.PLUS, "+", null, 1));
+		tokenMap.put(TokenType.MINUS, new Token(TokenType.MINUS, "-", null, 1));
+		tokenMap.put(TokenType.SLASH, new Token(TokenType.SLASH, "/", null, 1));
+		tokenMap.put(TokenType.STAR, new Token(TokenType.STAR, "*", null, 1));
+		tokenMap.put(TokenType.BANG, new Token(TokenType.BANG, "!", null, 1));
+		tokenMap.put(TokenType.TRUE, new Token(TokenType.TRUE, "", null, 1));
+		tokenMap.put(TokenType.FALSE, new Token(TokenType.FALSE, "", null, 1));
+		tokenMap.put(TokenType.NIL, new Token(TokenType.NIL, "", null, 1));
+		tokenMap.put(TokenType.STRING, new Token(TokenType.STRING, "ab", "ab", 1));
+		tokenMap.put(TokenType.LEFT_PAREN, new Token(TokenType.LEFT_PAREN, "(", null, 1));
+		tokenMap.put(TokenType.RIGHT_PAREN, new Token(TokenType.RIGHT_PAREN, ")", null, 1));
+		tokenMap.put(TokenType.SEMICOLON, new Token(TokenType.SEMICOLON, ";", null, 1));
+		tokenMap.put(TokenType.EOF, new Token(TokenType.EOF, "", null, 1));
+	}
+	
 	@Before
 	public void setUp() throws Exception {
 	}
@@ -24,32 +52,15 @@ public class ParserTests extends TestCase  {
 	private List<Token> generateTokenList(TokenType... types) {
 		List<Token> tList = new ArrayList<>();	
 		for(TokenType type : types){
-			switch(type){
-			case NUMBER: tList.add(new Token(type,"0",0,1)); break;
-			case EQUAL_EQUAL: tList.add(new Token(type,"==",null,1)); break;			
-			case BANG_EQUAL: tList.add(new Token(type,"!=",null,1)); break;
-			case GREATER: tList.add(new Token(type,">",null,1)); break;
-			case GREATER_EQUAL: tList.add(new Token(type,">=",null,1)); break;
-			case LESS: tList.add(new Token(type,"<",null,1)); break;
-			case LESS_EQUAL: tList.add(new Token(type,"<=",null,1)); break;
-			case PLUS: tList.add(new Token(type,"+",null,1)); break;
-			case MINUS: tList.add(new Token(type,"-",null,1)); break;
-			case SLASH: tList.add(new Token(type,"/",null,1)); break;
-			case STAR: tList.add(new Token(type,"*",null,1)); break;
-			case BANG: tList.add(new Token(type,"!",null,1)); break;
-			case TRUE: tList.add(new Token(type,"",null,1)); break;
-			case FALSE: tList.add(new Token(type,"",null,1)); break;
-			case NIL: tList.add(new Token(type,"",null,1)); break;
-			case STRING: tList.add(new Token(type,"ab","ab",1)); break;
-			case LEFT_PAREN: tList.add(new Token(type,"(",null,1)); break;
-			case RIGHT_PAREN: tList.add(new Token(type,")",null,1)); break;
-			case EOF: tList.add(new Token(type,"",null,1));break;
-			default: fail(String.format("Cant add token %s to token list", type));
-				break;
-			}
+			Token token = tokenMap.get(type); 
+			if(token != null)
+				tList.add(token);
+			else
+				fail(String.format("Cant add token %s to token list", type));
 		}
-		tList.add(new Token(TokenType.SEMICOLON,";",null,1));
-		tList.add(new Token(TokenType.EOF,"",null,1));
+		// automatically add ';' and EOF to create valid statement/ expression
+		tList.add(tokenMap.get(TokenType.SEMICOLON));
+		tList.add(tokenMap.get(TokenType.EOF));
 		return tList;
 	}
 	
@@ -112,16 +123,21 @@ public class ParserTests extends TestCase  {
 		assertThat(e, instanceOf(Expr.Grouping.class));	
 	}
 	
+	private Token generateNumberToken(float num)
+	{
+		return new Token(TokenType.NUMBER,Float.toString(num),num,1);
+	}
+	
 	@Test
 	public void testParse_precedence() {
 		List<Token> tList = new ArrayList<>();
-		tList.add(new Token(TokenType.NUMBER,"6",6,1));
-		tList.add(new Token(TokenType.SLASH,"/",null,1));
-		tList.add(new Token(TokenType.NUMBER,"3",3,1));
-		tList.add(new Token(TokenType.MINUS,"-",null,1));
-		tList.add(new Token(TokenType.NUMBER,"1",1,1));
-		tList.add(new Token(TokenType.SEMICOLON,";",null,1));
-		tList.add(new Token(TokenType.EOF,"",null,1));
+		tList.add(generateNumberToken(6));
+		tList.add(tokenMap.get(TokenType.SLASH));
+		tList.add(generateNumberToken(3));
+		tList.add(tokenMap.get(TokenType.MINUS));
+		tList.add(generateNumberToken(1));
+		tList.add(tokenMap.get(TokenType.SEMICOLON));
+		tList.add(tokenMap.get(TokenType.EOF));
 		Parser p = new Parser(tList);
 		List<Stmt> e = p.parse();
 		fail("Not yet implemented");
