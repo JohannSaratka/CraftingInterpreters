@@ -40,4 +40,6 @@ public class EnvironmentTest {
 		Token t = new Token(TokenType.VAR, "y", null, 1);
 		assertEquals(3, environment.get(t));
 	}
+	// TODO assign
+	// TODO assign without definition throws
 }

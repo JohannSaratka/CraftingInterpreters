@@ -178,4 +178,10 @@ public class ParserTests extends TestCase  {
 		assertEquals("x", statement.name.lexeme);
 		assertThat(statement.initializer, instanceOf(Expr.Literal.class));
 	}
+	
+	@Test
+	public void testParse_Assignment() {
+		Expr e = parseTypes(TokenType.IDENTIFIER, TokenType.EQUAL, TokenType.STRING);
+		assertThat(e, instanceOf(Expr.Assign.class));
+	}
 }

@@ -2,6 +2,7 @@ package main;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.lang.reflect.Field;
 
 import org.junit.Test;
 
@@ -107,12 +108,12 @@ public class InterpreterTests extends TestCase {
 	
 	@Test
 	public void testVisitGroupingExpr_IncorrectInput() {
-		Expr.Grouping testData = new Expr.Grouping(new Expr.Literal("three"));
+		Expr.Grouping testData = new Expr.Grouping(createLiteral("three"));
 		assertEquals("three", interpreter.visitGroupingExpr(testData));
 	}
 	
 	@Test
-	public void testExpressionStmt() {
+	public void testVisitExpressionStmt() {
 		Stmt.Expression stmt = new Stmt.Expression(
 				new Expr.Binary(
 						createLiteral(6.0), 
@@ -121,9 +122,11 @@ public class InterpreterTests extends TestCase {
 				);
 		interpreter.visitExpressionStmt(stmt);
 		//TODO How to test that expression was evaluated?
+		fail("Not yet implemented");
 	}
+	
 	@Test
-	public void testPrintStmt_printString() {
+	public void testVisitPrintStmt_printString() {
 		ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 		PrintStream originalOut = System.out;
 		System.setOut(new PrintStream(outContent));
@@ -134,7 +137,9 @@ public class InterpreterTests extends TestCase {
 		assertEquals("one\n", outContent.toString());
 		System.setOut(originalOut);
 	}
-	public void testPrintStmt_printExpression() {
+	
+	@Test
+	public void testVisitPrintStmt_printExpression() {
 		ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 		PrintStream originalOut = System.out;
 		System.setOut(new PrintStream(outContent));
@@ -145,5 +150,54 @@ public class InterpreterTests extends TestCase {
 		
 		assertEquals("3\n", outContent.toString());
 		System.setOut(originalOut);
+	}
+	
+	@Test
+	public void testVisitVarStmt_WithInitilizer() {
+		Token token = new Token(TokenType.IDENTIFIER, "x", null, 0);
+		Stmt.Var stmt = new Stmt.Var(token,
+				new Expr.Binary(createLiteral(1.0),	createToken(TokenType.PLUS), createLiteral(2.0)));	
+		Environment env = getEnvironment();
+		
+		interpreter.visitVarStmt(stmt);
+		
+		assertEquals(3.0, env.get(token));
+	}
+	
+	private Environment getEnvironment() {
+		Class<Interpreter> aInterpreter = Interpreter.class;
+		Field fieldEnvironment;
+		try {
+			fieldEnvironment = aInterpreter.getDeclaredField("environment");
+		} catch (NoSuchFieldException | SecurityException e) {
+			e.printStackTrace();
+			fail();
+			return null;
+		}
+		
+		Environment env;
+		try {
+			fieldEnvironment.setAccessible(true);
+			env = (Environment) fieldEnvironment.get(interpreter);
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
+			fail();
+			return null;
+		}
+		return env;
+	}
+	
+	@Test
+	public void testVisitAssignExpr() {
+		Token token = new Token(TokenType.IDENTIFIER, "x", null, 0);
+		Expr.Assign expr = new Expr.Assign(token, 
+				new Expr.Binary(createLiteral(1.0), createToken(TokenType.PLUS), createLiteral(2.0)));
+		Environment env = getEnvironment();
+		env.define(token.lexeme, null);
+		assertNull(env.get(token));
+		
+		assertEquals(3.0, interpreter.visitAssignExpr(expr));
+		
+		assertEquals(3.0, env.get(token));
 	}
 }

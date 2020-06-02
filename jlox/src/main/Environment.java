@@ -18,5 +18,14 @@ public class Environment {
 	void define(String name, Object value) {
 		values.put(name, value);
 	}
+
+	public void assign(Token name, Object value) {
+		if(values.containsKey(name.lexeme)) {
+			values.put(name.lexeme, value);
+			return;
+		}
+		throw new RuntimeError(name,
+				"Undefinde variable '" + name.lexeme + "'.");
+	}
 	
 }
