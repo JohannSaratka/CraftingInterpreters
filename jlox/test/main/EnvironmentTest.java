@@ -55,4 +55,68 @@ public class EnvironmentTest {
 		Token t = new Token(TokenType.VAR, "x", null, 1);
 		environment.assign(t, 5);
 	}
+	
+	@Test
+	public void test_defineVariableInInnerScope() {
+		Environment inner_env = new Environment(environment);
+		Token t = new Token(TokenType.VAR, "x", null, 1);
+		Token t2 = new Token(TokenType.VAR, "y", null, 1);
+		
+		environment.define(t.lexeme, 3);
+		inner_env.define(t2.lexeme, 2);
+		
+		assertEquals(3, environment.get(t));
+		assertEquals(3, inner_env.get(t));
+		assertEquals(2, inner_env.get(t2));
+	}
+	
+	@Test(expected=RuntimeError.class)
+	public void test__defineVariableInInnerScopeAccessFromOuterShouldThrowError() {
+		Environment inner_env = new Environment(environment);
+		Token t = new Token(TokenType.VAR, "x", null, 1);
+		Token t2 = new Token(TokenType.VAR, "y", null, 1);
+		
+		environment.define(t.lexeme, 3);
+		inner_env.define(t2.lexeme, 2);
+		
+		environment.get(t2);
+	}
+	
+	@Test
+	public void test_redefineVariableInInnerScope() {
+		Environment inner_env = new Environment(environment);
+		Token t = new Token(TokenType.VAR, "x", null, 1);
+		
+		environment.define(t.lexeme, 3);
+		inner_env.define(t.lexeme, 2);
+		
+		assertEquals(3, environment.get(t));
+		assertEquals(2, inner_env.get(t));
+	}
+	
+	@Test
+	public void test_redefineAndAssignVariableInInnerScope() {
+		Environment inner_env = new Environment(environment);
+		Token t = new Token(TokenType.VAR, "x", null, 1);
+		
+		environment.define(t.lexeme, 3);
+		inner_env.define(t.lexeme, 2);
+		inner_env.assign(t, 5);
+		
+		assertEquals(3, environment.get(t));
+		assertEquals(5, inner_env.get(t));
+	}
+	
+	@Test
+	public void test_redefineVariableInInnerAndAssignInOuterScope() {
+		Environment inner_env = new Environment(environment);
+		Token t = new Token(TokenType.VAR, "x", null, 1);
+		
+		environment.define(t.lexeme, 3);
+		inner_env.define(t.lexeme, 2);
+		environment.assign(t, 5);
+		
+		assertEquals(5, environment.get(t));
+		assertEquals(2, inner_env.get(t));
+	}
 }
