@@ -40,6 +40,19 @@ public class EnvironmentTest {
 		Token t = new Token(TokenType.VAR, "y", null, 1);
 		assertEquals(3, environment.get(t));
 	}
-	// TODO assign
-	// TODO assign without definition throws
+	
+	@Test
+	public void test_assignVariable() {
+		Token t = new Token(TokenType.VAR, "x", null, 1);
+		environment.define(t.lexeme, 3);
+		environment.assign(t, 5);
+		
+		assertEquals(5, environment.get(t));
+	}
+	
+	@Test(expected=RuntimeError.class)
+	public void test_assignWithoutDefinitionShouldThrowError() {
+		Token t = new Token(TokenType.VAR, "x", null, 1);
+		environment.assign(t, 5);
+	}
 }
