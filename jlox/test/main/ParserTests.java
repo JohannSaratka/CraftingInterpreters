@@ -18,8 +18,7 @@ public class ParserTests extends TestCase  {
 	
 	static {
 		tokenMap = new HashMap<>();
-
-		tokenMap.put(TokenType.NUMBER, new Token(TokenType.NUMBER, "0", 0, 1));
+		
 		tokenMap.put(TokenType.EQUAL_EQUAL, new Token(TokenType.EQUAL_EQUAL, "==", null, 1));
 		tokenMap.put(TokenType.BANG_EQUAL, new Token(TokenType.BANG_EQUAL, "!=", null, 1));
 		tokenMap.put(TokenType.GREATER, new Token(TokenType.GREATER, ">", null, 1));
@@ -37,9 +36,12 @@ public class ParserTests extends TestCase  {
 		tokenMap.put(TokenType.NIL, new Token(TokenType.NIL, "", null, 1));
 		tokenMap.put(TokenType.IDENTIFIER, new Token(TokenType.IDENTIFIER, "x", null, 1));
 		tokenMap.put(TokenType.STRING, new Token(TokenType.STRING, "ab", "ab", 1));
+		tokenMap.put(TokenType.NUMBER, new Token(TokenType.NUMBER, "0", 0, 1));
 		tokenMap.put(TokenType.VAR, new Token(TokenType.VAR, "var", null, 1));
 		tokenMap.put(TokenType.LEFT_PAREN, new Token(TokenType.LEFT_PAREN, "(", null, 1));
 		tokenMap.put(TokenType.RIGHT_PAREN, new Token(TokenType.RIGHT_PAREN, ")", null, 1));
+		tokenMap.put(TokenType.LEFT_BRACE, new Token(TokenType.LEFT_BRACE, "{", null, 1));
+		tokenMap.put(TokenType.RIGHT_BRACE, new Token(TokenType.RIGHT_BRACE, "(", null, 1));
 		tokenMap.put(TokenType.SEMICOLON, new Token(TokenType.SEMICOLON, ";", null, 1));
 		tokenMap.put(TokenType.EOF, new Token(TokenType.EOF, "", null, 1));
 	}
