@@ -10,6 +10,7 @@ import main.Expr.Unary;
 import main.Expr.Variable;
 import main.Stmt.Block;
 import main.Stmt.Expression;
+import main.Stmt.If;
 import main.Stmt.Print;
 import main.Stmt.Var;
 /**
@@ -76,10 +77,8 @@ class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String>{
 			builder.append(" ");
 			if (part instanceof Expr) {
 				builder.append(((Expr) part).accept(this));
-				// > Statements and State omit
 			} else if (part instanceof Stmt) {
 				builder.append(((Stmt) part).accept(this));
-				// < Statements and State omit
 			} else if (part instanceof Token) {
 				builder.append(((Token) part).lexeme);
 			} else if (part instanceof List) {
@@ -120,6 +119,12 @@ class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String>{
 
 	@Override
 	public String visitVarStmt(Var stmt) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String visitIfStmt(If stmt) {
 		// TODO Auto-generated method stub
 		return null;
 	}
