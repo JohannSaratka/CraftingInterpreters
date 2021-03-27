@@ -6,6 +6,7 @@ import main.Expr.Assign;
 import main.Expr.Binary;
 import main.Expr.Grouping;
 import main.Expr.Literal;
+import main.Expr.Logical;
 import main.Expr.Unary;
 import main.Expr.Variable;
 import main.Stmt.Block;
@@ -125,6 +126,12 @@ class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String>{
 
 	@Override
 	public String visitIfStmt(If stmt) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String visitLogicalExpr(Logical expr) {
 		// TODO Auto-generated method stub
 		return null;
 	}
