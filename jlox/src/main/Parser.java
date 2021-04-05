@@ -1,7 +1,11 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import main.Stmt.Block;
+import main.Stmt.While;
 
 /**
  * @todo challenge: add comma operator
@@ -63,6 +67,9 @@ class Parser {
 	}
 	
 	private Stmt statement() {
+		if (match(TokenType.FOR)) {
+			return forStatement();
+		}
 		if (match(TokenType.IF)) {
 			return ifStatement();
 		}
@@ -79,6 +86,48 @@ class Parser {
 		return expressionStatement();
 	}
 	
+	private Stmt forStatement() {
+		consume(TokenType.LEFT_PAREN, "Expect '(' after 'for'.");
+		Stmt initilizer;
+		if (match(TokenType.SEMICOLON)) {
+			initilizer = null;
+		} else if (match(TokenType.VAR)) {
+			initilizer = varDeclaration();
+		} else {
+			initilizer = expressionStatement();
+		}
+		
+		Expr condition = null;
+		if (!check(TokenType.SEMICOLON)) {
+			condition = expression();
+		}
+		consume(TokenType.SEMICOLON, "Expect ';' after loop condition");
+		
+		Expr increment = null;
+		if (!check(TokenType.RIGHT_PAREN)) {
+			increment = expression();
+		}
+		consume(TokenType.RIGHT_PAREN, "Expect ')' after for clauses.");
+		
+		Stmt body = statement();
+		
+		if (increment != null) {
+			body = new Stmt.Block(
+					Arrays.asList(
+							body, 
+							new Stmt.Expression(increment)));
+		}
+		if (condition == null) {
+			condition = new Expr.Literal(true);
+		}
+		body = new Stmt.While(condition, body);
+		
+		if (initilizer != null) {
+			body = new Stmt.Block(Arrays.asList(initilizer, body));
+		}
+		return body;
+		
+	}
 	private Stmt ifStatement() {
 		consume(TokenType.LEFT_PAREN, "Expect '(' after 'if'.");
 		Expr condition = expression();
